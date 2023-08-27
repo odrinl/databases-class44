@@ -1,0 +1,14 @@
+{
+  "name": "databases-class44",
+  "version": "1.0.0",
+  "description": "> If you are following the HackYourFuture curriculum we recommend you to start with module\r > 1: [HTML/CSS/GIT](https://github.com/HackYourFuture/HTML-CSS). To get a complete overview of the HackYourFuture\r > curriculum first, click [here](https://github.com/HackYourFuture/curriculum).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
+}
