@@ -5,3 +5,4 @@ node_modules/
 **/*.sh
 .idea
 .env
+Week3/assignment/package-lock.json
