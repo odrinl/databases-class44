@@ -47,7 +47,7 @@ db.query(`
 db.query(`
   CREATE TABLE IF NOT EXISTS account_changes (
     change_number INT AUTO_INCREMENT PRIMARY KEY,
-    account_number IN NOT NULL,
+    account_number INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     changed_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     remark TEXT,
