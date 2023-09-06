@@ -23,7 +23,7 @@ db.query('INSERT INTO account (account_number, balance) VALUES (12345, 5000)');
 db.query('INSERT INTO account (account_number, balance) VALUES (12346, 3000)');
 
 // Close the database connection
-connection.end((err) => {
+db.end((err) => {
   if (err) {
     console.error('Error closing the database connection: ' + err.stack);
     return;
