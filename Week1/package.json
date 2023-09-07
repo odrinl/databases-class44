@@ -1,0 +1,14 @@
+{
+  "name": "week1",
+  "version": "1.0.0",
+  "description": "Follow these steps if you missed them from the [home page of the repository](https://github.com/HackYourFuture/databases).",
+  "main": "async-create.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
+}
