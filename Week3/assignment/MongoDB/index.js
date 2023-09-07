@@ -69,12 +69,17 @@ async function findEpisodesExercises(client) {
     );
 
     // Find all of the episode titles where Bob Ross painted a CLIFF and a LIGHTHOUSE
-    const cliffAndLighthouseEpisodes = await collection.find({ elements: ["CLIFF", "LIGHTHOUSE"] }).toArray();
-    const cliffAndLighthouseEpisodeTitles = cliffAndLighthouseEpisodes.map((episode) => episode.title);
+    const cliffAndLighthouseEpisodes = await collection
+  .find({ elements: { $all: ["CLIFF", "LIGHTHOUSE"] } })
+  .toArray();
 
-    console.log(
-      `The episodes that Bob Ross painted a CLIFF and a LIGHTHOUSE are ${cliffAndLighthouseEpisodeTitles.join(', ')}`
-    );
+const cliffAndLighthouseEpisodeTitles = cliffAndLighthouseEpisodes.map(
+  (episode) => episode.title
+);
+
+console.log(
+  `The episodes that Bob Ross painted a CLIFF and a LIGHTHOUSE are ${cliffAndLighthouseEpisodeTitles.join(', ')}`
+);
   } catch (err) {
     console.error(err);
   }
@@ -130,8 +135,6 @@ async function main() {
     );
   }
   const client = new MongoClient(process.env.MONGODB_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverApi: ServerApiVersion.v1,
   });
 

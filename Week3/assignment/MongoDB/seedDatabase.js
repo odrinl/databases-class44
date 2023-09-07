@@ -1,5 +1,6 @@
 require('dotenv').config();
 const data = require("./data.json");
+const { MongoClient } = require('mongodb');
 
 /*
  * This function will drop and recreate the collection of sample data in our csv file.
