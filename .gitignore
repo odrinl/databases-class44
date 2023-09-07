@@ -1,8 +1,0 @@
-node_modules/
-*/node_modules/
-**/*.DS_Store
-**/*-secret.json
-**/*.sh
-.idea
-.env
-Week3/assignment/package-lock.json
