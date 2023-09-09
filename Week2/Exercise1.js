@@ -20,14 +20,14 @@ db.connect((err) => {
 
 // Create the authors table
 db.query(`
-  CREATE TABLE IF NOT EXISTS authors (
-    author_id INT AUTO_INCREMENT PRIMARY KEY,
-    author_name VARCHAR(255),
-    university VARCHAR(255),
-    date_of_birth DATE,
-    h_index INT,
-    gender VARCHAR(10)
-  )
+CREATE TABLE IF NOT EXISTS authors (
+  author_id INT AUTO_INCREMENT PRIMARY KEY,
+  author_name VARCHAR(255) NOT NULL,
+  university VARCHAR(255) NOT NULL,
+  date_of_birth DATE NOT NULL,
+  h_index INT NOT NULL,
+  gender ENUM('M', 'F', 'X') NOT NULL
+)
 `, (err, result) => {
   if (err) {
     console.error('Error creating authors table:', err);
