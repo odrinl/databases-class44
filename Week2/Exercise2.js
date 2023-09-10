@@ -54,21 +54,21 @@ db.query(`
 db.query(`
 INSERT INTO authors (author_name, university, date_of_birth, h_index, gender, mentor)
 VALUES
-    ('Author 1', 'University A', '1990-01-01', 10, 'Male', NULL),
-    ('Author 2', 'University B', '1991-02-02', 8, 'Female', NULL),
-    ('Author 3', 'University A', '1992-03-03', 6, 'Male', 1),
-    ('Author 4', 'University C', '1993-04-04', 9, 'Female', 2),
-    ('Author 5', 'University B', '1994-05-05', 7, 'Male', 1),
-    ('Author 6', 'University A', '1995-06-06', 5, 'Female', 3),
-    ('Author 7', 'University C', '1996-07-07', 8, 'Male', 2),
-    ('Author 8', 'University A', '1997-08-08', 6, 'Female', 4),
-    ('Author 9', 'University B', '1998-09-09', 7, 'Male', 3),
-    ('Author 10', 'University C', '1999-10-10', 8, 'Female', 5),
-    ('Author 11', 'University A', '2000-11-11', 9, 'Male', 6),
-    ('Author 12', 'University B', '2001-12-12', 10, 'Female', 7),
-    ('Author 13', 'University C', '2002-01-13', 8, 'Male', 8),
-    ('Author 14', 'University A', '2003-02-14', 7, 'Female', 9),
-    ('Author 15', 'University B', '2004-03-15', 6, 'Male', 10);
+    ('Author 1', 'University A', '1990-01-01', 10, 'M', NULL),
+    ('Author 2', 'University B', '1991-02-02', 8, 'F', NULL),
+    ('Author 3', 'University A', '1992-03-03', 6, 'M', 1),
+    ('Author 4', 'University C', '1993-04-04', 9, 'F', 2),
+    ('Author 5', 'University B', '1994-05-05', 7, 'M', 1),
+    ('Author 6', 'University A', '1995-06-06', 5, 'F', 3),
+    ('Author 7', 'University C', '1996-07-07', 8, 'M', 2),
+    ('Author 8', 'University A', '1997-08-08', 6, 'F', 4),
+    ('Author 9', 'University B', '1998-09-09', 7, 'M', 3),
+    ('Author 10', 'University C', '1999-10-10', 8, 'F', 5),
+    ('Author 11', 'University A', '2000-11-11', 9, 'M', 6),
+    ('Author 12', 'University B', '2001-12-12', 10, 'F', 7),
+    ('Author 13', 'University C', '2002-01-13', 8, 'M', 8),
+    ('Author 14', 'University A', '2003-02-14', 7, 'F', 9),
+    ('Author 15', 'University B', '2004-03-15', 6, 'M', 10);
 `, (err, result) => {
   if (err) {
     console.error('Error inserting data for authors:', err);

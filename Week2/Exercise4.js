@@ -40,15 +40,11 @@ GROUP BY rp.paper_title
 
 // Query to calculate the sum of research papers published by all female authors
 db.query(
-  `
-  SELECT SUM(rp.paper_count) AS total_papers_by_female_authors
-  FROM (
-    SELECT COUNT(*) AS paper_count
-    FROM research_Papers rp
-    JOIN author_paper ap ON rp.paper_id = ap.paper_id
-    JOIN authors a ON ap.author_id = a.author_id
-    WHERE a.gender = 'female'
-  ) AS rp
+  `SELECT COUNT(DISTINCT p.paper_title) AS total_papers_by_female_authors
+  FROM authors a
+  INNER JOIN author_paper ap ON a.author_id = ap.author_id
+  INNER JOIN research_Papers p ON ap.paper_id = p.paper_id
+  WHERE a.gender = 'F'
 `,
   (err, results) => {
     if (err) {
@@ -86,14 +82,10 @@ db.query(
 // Query to calculate the sum of research papers by authors per university
 db.query(
   `
-  SELECT university, SUM(rp.paper_count) AS total_papers_by_university
-  FROM (
-    SELECT a.university, COUNT(*) AS paper_count
-    FROM author_paper ap
-    JOIN authors a ON ap.author_id = a.author_id
-    GROUP BY a.university
-  ) AS rp
-  GROUP BY university
+  SELECT a.university, COUNT(DISTINCT ap.paper_id) AS total_papers_by_university
+  FROM author_paper ap
+  JOIN authors a ON ap.author_id = a.author_id
+  GROUP BY a.university
 `,
   (err, results) => {
     if (err) {
