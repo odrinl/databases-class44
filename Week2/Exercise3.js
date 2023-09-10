@@ -5,7 +5,7 @@ const db = mysql.createConnection({
   port: 3306,
   user: 'hyfuser',
   password: 'hyfpassword',
-  database: 'papers',
+  database: 'paper',
 });
 
 // Connect to the database
@@ -16,6 +16,18 @@ db.connect((err) => {
   }
   console.log('Connected to MySQL database');
 });
+
+// Generic function to handle query results and errors
+function handleQueryResult(err, results, message) {
+  if (err) {
+    console.error(`Error executing query (${message}):`, err);
+  } else {
+    console.log(message);
+    results.forEach((row) => {
+      console.log(row);
+    });
+  }
+}
 
 // Query to print names of all authors and their mentors
 db.query(
@@ -30,16 +42,7 @@ LEFT JOIN
 
 `,
   (err, results) => {
-    if (err) {
-      console.error('Error executing query:', err);
-    } else {
-      console.log('\nAuthors and Their Mentors:');
-      results.forEach((row) => {
-        console.log(
-          `Author: ${row.author_name}, Mentor: ${row.mentor_name || 'N/A'}`
-        );
-      });
-    }
+    handleQueryResult(err, results, '\nAuthors and Their Mentors:');
   }
 );
 
@@ -53,26 +56,7 @@ db.query(
   GROUP BY a.author_id
   `,
   (err, results) => {
-    if (err) {
-      console.error('Error executing query:', err);
-    } else {
-      console.log('\nAuthors and Their Published Papers:');
-      results.forEach((row) => {
-        // Add a space after each comma in published_papers
-        const formattedPapers = row.published_papers.replace(/,/g, ', ');
-        // Format the date_of_birth using JavaScript
-        const formattedDate = row.date_of_birth.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        });
-        console.log(
-          `author_id: ${row.author_id}, author_name: ${row.author_name}, university: ${row.university}, date_of_birth: ${formattedDate}, h_index: ${row.h_index}, gender: ${row.gender}, mentor: ${row.mentor}`
-        );
-        console.log(`published_papers: ${formattedPapers}.\n`);
-
-      });
-    }
+    handleQueryResult(err, results, '\nAuthors and Their Published Papers:');
   }
 );
 
