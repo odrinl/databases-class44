@@ -3,11 +3,14 @@ const { MongoClient } = require('mongodb');
 // Load environment variables from .env file
 require('dotenv').config(); 
 
-const dbName = 'databaseWeek4'; // Replace with your database name
+// Access environment variables
+const uri = process.env.MONGODB_URL;
+
+const dbName = 'databaseWeek4';
 
 // Function to perform a fund transfer between two accounts
 async function transferFunds(fromAccountNumber, toAccountNumber, amount, remark) {
-  const client = new MongoClient(MONGODB_URL);
+  const client = new MongoClient(uri);
 
   try {
     await client.connect();

@@ -3,6 +3,9 @@ const { MongoClient } = require('mongodb');
 // Load environment variables from .env file
 require('dotenv').config(); 
 
+// Access environment variables
+const uri = process.env.MONGODB_URL;
+
 const dbName = 'databaseWeek4';
 
 // Sample data for accounts
@@ -35,7 +38,7 @@ const sampleAccounts = [
 
 // Function to set up the database with sample data
 async function setupDatabase() {
-  const client = new MongoClient(MONGODB_URL);
+  const client = new MongoClient(uri);
 
   try {
     // Connect to the MongoDB cluster
