@@ -1,7 +1,7 @@
 // Import MongoDB library
 const { MongoClient } = require('mongodb');
 // Load environment variables from .env file
-require('dotenv').config(); 
+require('dotenv').config();
 
 // Access environment variables
 const uri = process.env.MONGODB_URL;
@@ -9,7 +9,12 @@ const uri = process.env.MONGODB_URL;
 const dbName = 'databaseWeek4';
 
 // Function to perform a fund transfer between two accounts
-async function transferFunds(fromAccountNumber, toAccountNumber, amount, remark) {
+async function transferFunds(
+  fromAccountNumber,
+  toAccountNumber,
+  amount,
+  remark
+) {
   const client = new MongoClient(uri);
 
   try {
@@ -19,8 +24,12 @@ async function transferFunds(fromAccountNumber, toAccountNumber, amount, remark)
     const accountsCollection = db.collection('accounts');
 
     // Find the sender and receiver accounts
-    const senderAccount = await accountsCollection.findOne({ account_number: fromAccountNumber });
-    const receiverAccount = await accountsCollection.findOne({ account_number: toAccountNumber });
+    const senderAccount = await accountsCollection.findOne({
+      account_number: fromAccountNumber,
+    });
+    const receiverAccount = await accountsCollection.findOne({
+      account_number: toAccountNumber,
+    });
 
     if (!senderAccount || !receiverAccount) {
       console.error('Sender or receiver account not found.');
@@ -60,8 +69,24 @@ async function transferFunds(fromAccountNumber, toAccountNumber, amount, remark)
     receiverAccount.account_changes.push(receiverChange);
 
     // Update account balances
-    await accountsCollection.updateOne({ account_number: fromAccountNumber }, { $set: { balance: updatedSenderBalance, account_changes: senderAccount.account_changes } });
-    await accountsCollection.updateOne({ account_number: toAccountNumber }, { $set: { balance: updatedReceiverBalance, account_changes: receiverAccount.account_changes } });
+    await accountsCollection.updateOne(
+      { account_number: fromAccountNumber },
+      {
+        $set: {
+          balance: updatedSenderBalance,
+          account_changes: senderAccount.account_changes,
+        },
+      }
+    );
+    await accountsCollection.updateOne(
+      { account_number: toAccountNumber },
+      {
+        $set: {
+          balance: updatedReceiverBalance,
+          account_changes: receiverAccount.account_changes,
+        },
+      }
+    );
 
     console.log('Funds transferred successfully.');
   } catch (err) {

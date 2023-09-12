@@ -1,9 +1,9 @@
 // Import MongoDB library
 const { MongoClient } = require('mongodb');
 // Load environment variables from .env file
-require('dotenv').config(); 
+require('dotenv').config();
 
-// Access environment variables
+// Access environment variable
 const uri = process.env.MONGODB_URL;
 
 const dbName = 'databaseWeek4';
@@ -43,7 +43,7 @@ async function setupDatabase() {
   try {
     // Connect to the MongoDB cluster
     await client.connect();
-    
+
     const db = client.db(dbName);
     const accountsCollection = db.collection('accounts');
 
