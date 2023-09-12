@@ -8,6 +8,12 @@ const uri = process.env.MONGODB_URL;
 
 const dbName = 'databaseWeek4';
 
+// Function to get the current date and time in a human-readable format
+function getCurrentDateTime() {
+  const currentDate = new Date();
+  return currentDate.toLocaleString(undefined, { hour12: false });
+}
+
 // Function to perform a fund transfer between two accounts
 async function transferFunds(
   fromAccountNumber,
@@ -53,14 +59,14 @@ async function transferFunds(
     const senderChange = {
       change_number: senderChangeNumber,
       amount: -amount,
-      changed_date: new Date(),
+      changed_date: getCurrentDateTime(),
       remark,
     };
 
     const receiverChange = {
       change_number: receiverChangeNumber,
       amount,
-      changed_date: new Date(),
+      changed_date: getCurrentDateTime(),
       remark,
     };
 
