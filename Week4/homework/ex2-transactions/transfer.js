@@ -1,10 +1,6 @@
 // Import MongoDB library
 const { MongoClient } = require('mongodb');
 // Load environment variables from .env file
-require('dotenv').config();
-
-// Access environment variables
-const uri = process.env.MONGODB_URL;
 
 const dbName = 'databaseWeek4';
 
@@ -14,91 +10,95 @@ function getCurrentDateTime() {
   return currentDate.toLocaleString(undefined, { hour12: false });
 }
 
-// Function to perform a fund transfer between two accounts
+/**
+ * Function to perform a fund transfer between two accounts
+ * @param {MongoClient} client A MongoClient that is connected to a cluster with the banking database
+ * @param {String} fromAccountNumber The _id of the account where money should be subtracted
+ * @param {String} toAccountNumber _id of the account where money should be added
+ * @param {Number} amount The amount of money to be transferred
+ * @param {String} remark The remark that should be added to the transaction
+ */
+
 async function transferFunds(
+  client,
   fromAccountNumber,
   toAccountNumber,
   amount,
   remark
 ) {
-  const client = new MongoClient(uri);
+  let session;
 
   try {
-    await client.connect();
+    
+    const accountsCollection = client.db(dbName).collection('accounts');
+    
+  // Step 1: Start a Client Session
+  session = client.startSession();
 
-    const db = client.db(dbName);
-    const accountsCollection = db.collection('accounts');
+  // Step 2: Optional. Define options for the transaction
+  const transactionOptions = {
+    readPreference: 'primary',
+    readConcern: { level: 'local' },
+    writeConcern: { w: 'majority' }
+  };
 
-    // Find the sender and receiver accounts
-    const senderAccount = await accountsCollection.findOne({
-      account_number: fromAccountNumber,
-    });
-    const receiverAccount = await accountsCollection.findOne({
-      account_number: toAccountNumber,
-    });
+    // Step 3: Use withTransaction to start a transaction, execute the callback, and commit (or abort on error)
+    await session.withTransaction(async () => {
 
-    if (!senderAccount || !receiverAccount) {
-      console.error('Sender or receiver account not found.');
-      return;
-    }
+        // Remove the money from the first account
+        const subtractMoneyResults = await accountsCollection.updateOne(
+          { account_number: fromAccountNumber },
+          {
+            $inc: { balance: -amount }, 
+            $push: { 
+              account_changes: {
+                change_number: { $inc: 1 },
+                amount: -amount,
+                changed_date: getCurrentDateTime(),
+                remark,
+              },
+            },
+          },
+          { session }
+        );
+        console.log(`${subtractMoneyResults.matchedCount} document(s) found in the accounts collection with _id ${fromAccountNumber}.`);
+        console.log(`${subtractMoneyResults.modifiedCount} document(s) was/were updated to remove the money.`);
+        if (subtractMoneyResults.modifiedCount !== 1) {
+            await session.abortTransaction();
+            return;
+        }
 
-    if (senderAccount.balance < amount) {
-      console.error('Insufficient balance for the transfer.');
-      return;
-    }
+        // Add the money to the second account
+        const addMoneyResults = await accountsCollection.updateOne(
+          { account_number: toAccountNumber },
+          {
+            $inc: { balance: amount },
+            $push: { 
+              account_changes: {
+                change_number: { $inc: 1 },
+                amount,
+                changed_date: getCurrentDateTime(),
+                remark,
+              },
+            },
+          },
+          { session }
+        );
+        console.log(`${addMoneyResults.matchedCount} document(s) found in the accounts collection with _id ${toAccountNumber}.`);
+        console.log(`${addMoneyResults.modifiedCount} document(s) was/were updated to add the money.`);
+        if (addMoneyResults.modifiedCount !== 1) {
+            await session.abortTransaction();
+            return;
+        }
 
-    // Update sender's and receiver's balances
-    const updatedSenderBalance = senderAccount.balance - amount;
-    const updatedReceiverBalance = receiverAccount.balance + amount;
-
-    // Generate change numbers
-    const senderChangeNumber = senderAccount.account_changes.length + 1;
-    const receiverChangeNumber = receiverAccount.account_changes.length + 1;
-
-    // Create change objects for sender and receiver
-    const senderChange = {
-      change_number: senderChangeNumber,
-      amount: -amount,
-      changed_date: getCurrentDateTime(),
-      remark,
-    };
-
-    const receiverChange = {
-      change_number: receiverChangeNumber,
-      amount,
-      changed_date: getCurrentDateTime(),
-      remark,
-    };
-
-    // Update account changes arrays
-    senderAccount.account_changes.push(senderChange);
-    receiverAccount.account_changes.push(receiverChange);
-
-    // Update account balances
-    await accountsCollection.updateOne(
-      { account_number: fromAccountNumber },
-      {
-        $set: {
-          balance: updatedSenderBalance,
-          account_changes: senderAccount.account_changes,
-        },
-      }
-    );
-    await accountsCollection.updateOne(
-      { account_number: toAccountNumber },
-      {
-        $set: {
-          balance: updatedReceiverBalance,
-          account_changes: receiverAccount.account_changes,
-        },
-      }
-    );
-
-    console.log('Funds transferred successfully.');
-  } catch (err) {
-    console.error('Error transferring funds:', err);
+    }, transactionOptions);
+    console.log("The money was successfully transferred.");
+  } catch (e) {
+    console.log("The money transfer encountered an unexpected error: " + e);
   } finally {
-    client.close();
+    if (session) {
+      await session.endSession();
+    }
   }
 }
 

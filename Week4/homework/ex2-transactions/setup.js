@@ -1,10 +1,5 @@
 // Import MongoDB library
 const { MongoClient } = require('mongodb');
-// Load environment variables from .env file
-require('dotenv').config();
-
-// Access environment variable
-const uri = process.env.MONGODB_URL;
 
 const dbName = 'databaseWeek4';
 
@@ -42,17 +37,16 @@ const sampleAccounts = [
     ],
   },
 ];
+/**
+ * Function to set up the database with sample data using
+ * @param {MongoClient} client A MongoClient that is connected to a cluster with account database
+ */
 
-// Function to set up the database with sample data
-async function setupDatabase() {
-  const client = new MongoClient(uri);
+async function setupDatabase(client) {
 
   try {
-    // Connect to the MongoDB cluster
-    await client.connect();
 
-    const db = client.db(dbName);
-    const accountsCollection = db.collection('accounts');
+    const accountsCollection = client.db(dbName).collection('accounts');
 
     // Clear existing data in the accounts collection
     await accountsCollection.deleteMany({});
@@ -63,8 +57,6 @@ async function setupDatabase() {
     console.log('Database setup complete.');
   } catch (err) {
     console.error('Error setting up the database:', err);
-  } finally {
-    client.close();
   }
 }
 
