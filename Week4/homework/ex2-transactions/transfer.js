@@ -32,15 +32,21 @@ async function transferFunds(
     
     const accountsCollection = client.db(dbName).collection('accounts');
     
-  // Step 1: Start a Client Session
-  session = client.startSession();
+    // Step 1: Start a Client Session
+    session = client.startSession();
 
-  // Step 2: Optional. Define options for the transaction
-  const transactionOptions = {
-    readPreference: 'primary',
-    readConcern: { level: 'local' },
-    writeConcern: { w: 'majority' }
-  };
+    // Step 2: Optional. Define options for the transaction
+    const transactionOptions = {
+      readPreference: 'primary',
+      readConcern: { level: 'local' },
+      writeConcern: { w: 'majority' }
+    };
+
+    // Calculate the new change_number
+      const fromAccount = await accountsCollection.findOne({ account_number: fromAccountNumber });
+      const toAccount = await accountsCollection.findOne({ account_number: toAccountNumber });
+      const fromChangeNumber = fromAccount.account_changes.length + 1;
+      const toChangeNumber = toAccount.account_changes.length + 1;
 
     // Step 3: Use withTransaction to start a transaction, execute the callback, and commit (or abort on error)
     await session.withTransaction(async () => {
@@ -52,7 +58,7 @@ async function transferFunds(
             $inc: { balance: -amount }, 
             $push: { 
               account_changes: {
-                change_number: { $inc: 1 },
+                change_number: fromChangeNumber,
                 amount: -amount,
                 changed_date: getCurrentDateTime(),
                 remark,
@@ -75,7 +81,7 @@ async function transferFunds(
             $inc: { balance: amount },
             $push: { 
               account_changes: {
-                change_number: { $inc: 1 },
+                change_number: toChangeNumber,
                 amount,
                 changed_date: getCurrentDateTime(),
                 remark,
