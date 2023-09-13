@@ -13,8 +13,8 @@ function getCurrentDateTime() {
 /**
  * Function to perform a fund transfer between two accounts
  * @param {MongoClient} client A MongoClient that is connected to a cluster with the banking database
- * @param {String} fromAccountNumber The _id of the account where money should be subtracted
- * @param {String} toAccountNumber _id of the account where money should be added
+ * @param {String} fromAccountNumber The account_number of the account where money should be subtracted
+ * @param {String} toAccountNumber The account_number of the account where money should be added
  * @param {Number} amount The amount of money to be transferred
  * @param {String} remark The remark that should be added to the transaction
  */
@@ -61,7 +61,7 @@ async function transferFunds(
           },
           { session }
         );
-        console.log(`${subtractMoneyResults.matchedCount} document(s) found in the accounts collection with _id ${fromAccountNumber}.`);
+        console.log(`${subtractMoneyResults.matchedCount} document(s) found in the accounts collection with account_number ${fromAccountNumber}.`);
         console.log(`${subtractMoneyResults.modifiedCount} document(s) was/were updated to remove the money.`);
         if (subtractMoneyResults.modifiedCount !== 1) {
             await session.abortTransaction();
@@ -84,7 +84,7 @@ async function transferFunds(
           },
           { session }
         );
-        console.log(`${addMoneyResults.matchedCount} document(s) found in the accounts collection with _id ${toAccountNumber}.`);
+        console.log(`${addMoneyResults.matchedCount} document(s) found in the accounts collection with account_number ${toAccountNumber}.`);
         console.log(`${addMoneyResults.modifiedCount} document(s) was/were updated to add the money.`);
         if (addMoneyResults.modifiedCount !== 1) {
             await session.abortTransaction();
